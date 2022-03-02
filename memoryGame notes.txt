@@ -1,0 +1,12 @@
+GAMEPLAY:
+Game has different levels of difficulty.
+The background of evry square is gray at first, the game picks a random color for every time square couple, once the player clicks
+the square turns from gray to the color previously chosen from the program.
+Every time a player finishes a level, the board resets and more squares are added to the game.
+
+GAME OVER:
+For a player to lose, the ammount of given moves have to be 0.
+The ammount of moves is determined by the ammount of squares /2 +1
+
+Once the player has lost, a popup appears in the middle of the screen with "Game Over" text
+with a "restart" button
