@@ -1,4 +1,5 @@
 import './App.css';
+import React, { useState } from 'react';
 import { makeStyles } from "@material-ui/core/styles";
 import { Grid, Button } from "@material-ui/core/";
 
@@ -23,21 +24,26 @@ const useStyles = makeStyles((theme) => ({
     width: "30%",
     backgroundColor: "gray",
   },
+  buttonDiv: {
+    textAlign: 'center',
+  },
+  button: {
+    backgroundColor: "cyan",
+    boxShadow: "4px 4px 9px 2px rgba(0,0,0,0.69)"
+  },
 }))
 
 function App() {
   const classes = useStyles();
-  
-  let ammountOfSquares = 16;
-  let ammountOfColors = ammountOfSquares/2;
-  let ammountOfMoves = ammountOfSquares/2;
-  let revealed = false;
-  let squareSize = "21%";
-  let unrevealedSquareColor = "gray";
-  let revealedColor = unrevealedSquareColor;
-  let squaresArray = Array(ammountOfSquares);
-  let coloredSquares = {};
-
+  const [revealed, setRevealed] = useState(false);
+  const [coloredSquares, setColoredSquares] = useState({});
+  const [ammountOfSquares, setAmmountOfSquares] = useState(16);
+  const [ammountOfColors, setAmmountOfColors] = useState(ammountOfSquares/2);
+  const [ammountOfMoves, setAmmountOfMoves] = useState(ammountOfSquares/2);
+  const [squareSize, setSquareSize] = useState("21%");
+  const [unrevealedSquareColor, setUnrevealedSquareColor] = useState("gray");
+  const [squaresArray, setSquaresArray] = useState(Array(ammountOfSquares));
+  const [showedSquares, setShowedSquares] = useState(0);
 
   function getRandomInt(max) {
     return Math.floor(Math.random() * max);
@@ -54,7 +60,7 @@ function App() {
     let currentIndex = array.length,  randomIndex;
   
     // While there remain elements to shuffle...
-    while (currentIndex != 0) {
+    while (currentIndex !== 0) {
   
       // Pick a remaining element...
       randomIndex = getRandomInt(currentIndex);
@@ -77,27 +83,39 @@ function App() {
     return color;
   }
 
-  squaresArray = enumerateArray(squaresArray)
-  squaresArray = shuffle(squaresArray)
+  
 
   function createColoredSquares(numberOfSquares, array){
-    let squaresToReturn = [{}];
-    for(let i=0;i<numberOfSquares-1;i++){
+    let squaresToReturn = {};
+    for(let i=0;i<numberOfSquares-1;i+=2){
       let randomColor = getRandomColor()
-      squaresToReturn.push({[randomColor]:array[i]});
+      Object.assign(squaresToReturn, {[array[i]]:randomColor});
+      Object.assign(squaresToReturn, {[array[i+1]]:randomColor});
     }
     return squaresToReturn
   }
 
-  coloredSquares = createColoredSquares(ammountOfSquares, squaresArray)
-  console.log(coloredSquares)
+  function resetColors(){
+    setSquaresArray(enumerateArray(squaresArray))
+    setSquaresArray(shuffle(squaresArray))
+    setColoredSquares(createColoredSquares(ammountOfSquares, squaresArray))
+  }
 
-  function createCards(){
+
+  function displayColoredSquare(target){
+    if (!isNaN(target.id) && target.id !== '') {
+      let id = target.id
+      target.style.background = coloredSquares[id]
+      console.log("hi")
+      setShowedSquares(showedSquares+1)
+    }
+  }
+
+  function createSquares(){
     return(
       <Grid container className={classes.squareContainer}>
         {Array.from(Array(ammountOfSquares)).map((_, index) => (
-            <Grid key={index} id={index} className={classes.singleSquare} style={{width: squareSize, height: squareSize, background: revealedColor, }}>
-            </Grid>
+            <Grid key={index} id={index} className={classes.singleSquare} style={{width: squareSize, height: squareSize, background: unrevealedSquareColor, }}/>
           ))}
       </Grid>
     )
@@ -108,12 +126,19 @@ function App() {
   }
 
   document.addEventListener('mousedown', function (event) {
+    if(showedSquares<2){
+      displayColoredSquare(event.target)
+      console.log(showedSquares)
+    }
   })
 
     return (
       <div className="App">
+        <div className={classes.buttonDiv}>
+          <Button onClick={() => resetColors()} className={classes.button}>Reset Colors</Button>
+        </div>
         <div className="gameContainer">
-          {createCards()}
+          {createSquares()}
         </div>
       </div>
     );
