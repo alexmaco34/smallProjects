@@ -43,7 +43,7 @@ function App() {
   const [squareSize, setSquareSize] = useState("21%");
   const [unrevealedSquareColor, setUnrevealedSquareColor] = useState("gray");
   const [squaresArray, setSquaresArray] = useState(Array(ammountOfSquares));
-  const [showedSquares, setShowedSquares] = useState(0);
+  const [twoVisibleSquares, settwoVisibleSquares] = useState(false);
 
   function getRandomInt(max) {
     return Math.floor(Math.random() * max);
@@ -91,6 +91,7 @@ function App() {
       let randomColor = getRandomColor()
       Object.assign(squaresToReturn, {[array[i]]:randomColor});
       Object.assign(squaresToReturn, {[array[i+1]]:randomColor});
+      Object.assign("visible", false)
     }
     return squaresToReturn
   }
@@ -106,8 +107,7 @@ function App() {
     if (!isNaN(target.id) && target.id !== '') {
       let id = target.id
       target.style.background = coloredSquares[id]
-      console.log("hi")
-      setShowedSquares(showedSquares+1)
+      
     }
   }
 
@@ -120,15 +120,31 @@ function App() {
       </Grid>
     )
   }
+  
+  function checkVisibleSquares(){
+    let ammountOfColoredSquares = 0
+    for(let i = 0; i<ammountOfSquares; i++){
+      let colorOfSquare = document.getElementById(i).style.background
+      if(colorOfSquare !== "gray"){
+        ammountOfColoredSquares++
+      }
+    }
+    return ammountOfColoredSquares
+  }
 
-  function revealSquare(){
+  function checkColorCoupple(){
 
   }
 
+  document.addEventListener('click', function () {
+  })
+
   document.addEventListener('mousedown', function (event) {
-    if(showedSquares<2){
+    if(checkVisibleSquares() !== 2){
       displayColoredSquare(event.target)
-      console.log(showedSquares)
+    }
+    if(checkVisibleSquares() === 2){
+      
     }
   })
 
